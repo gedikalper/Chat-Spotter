@@ -1,6 +1,7 @@
-// components/ui/Page.tsx
+import Constants from "expo-constants";
+import { useColorScheme } from "nativewind";
 import React, { ReactNode } from "react";
-import { ImageBackground, SafeAreaView, ScrollView, StatusBar, View } from "react-native";
+import { ScrollView, StatusBar, View } from "react-native";
 
 interface PageProps {
   children: ReactNode;
@@ -8,24 +9,42 @@ interface PageProps {
   className?: string;
 }
 
-export const Page = ({ children, scrollable = true, className = "" }: PageProps) => {
-  const content = (
-    <ImageBackground
-      source={require("@/assets/images/grid.png")}
-      resizeMode="cover"
-      className={`flex-1`}
-      // style={{ backgroundColor: colors.primary }}
-    >
-      <StatusBar barStyle="light-content" backgroundColor="#1abc9c" />
-      {scrollable ? (
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>{children}</ScrollView>
-      ) : (
-        <View className="flex-1">{children}</View>
-      )}
-    </ImageBackground>
-  );
+const STATUS_BAR_HEIGHT = Constants.statusBarHeight;
+const IS_IOS = Constants.platform?.ios;
+
+export const Page = ({
+  children,
+  scrollable = false,
+  className = "",
+}: PageProps) => {
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
+
+  // Content render fonksiyonu
+  const renderContent = () => {
+    if (scrollable) {
+      return (
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          showsVerticalScrollIndicator={false}
+        >
+          {children}
+        </ScrollView>
+      );
+    }
+
+    return <View className="flex-1">{children}</View>;
+  };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#122414]">{content}</SafeAreaView>
+    <View className={`flex-1 px-safe-offset-5 bg-white pt-[20px] ${className}`}>
+      <View className="flex-1">
+        <StatusBar
+          barStyle={isDark ? "light-content" : "dark-content"}
+          backgroundColor="transparent"
+        />
+        {renderContent()}
+      </View>
+    </View>
   );
 };
