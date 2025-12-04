@@ -8,6 +8,7 @@ export interface ChatMessage {
   time: Date;
 }
 
+
 export interface ChatStats {
   totalMessages: number;
   todayMessages: number;
@@ -35,4 +36,5 @@ export interface IframeRef {
 
 export interface MonitorIntervalRef {
   current: NodeJS.Timeout | null;
+
 }
